@@ -1,4 +1,3 @@
-import 'package:algorand_dart/algorand_dart.dart';
 import 'package:equatable/equatable.dart';
 import 'package:ledger_flutter/ledger_flutter.dart';
 
@@ -31,10 +30,18 @@ class LedgerBleDisconnectRequested extends LedgerBleEvent {
 
 class LedgerBleSignTransactionRequested extends LedgerBleEvent {
   final LedgerDevice device;
-  final Address account;
 
-  LedgerBleSignTransactionRequested(this.device, this.account);
+  LedgerBleSignTransactionRequested(this.device);
 
   @override
-  List<Object?> get props => [device, account];
+  List<Object?> get props => [device];
+}
+
+class LedgerBleSignPersonalMessageRequested extends LedgerBleEvent {
+  final LedgerDevice device;
+
+  LedgerBleSignPersonalMessageRequested(this.device);
+
+  @override
+  List<Object?> get props => [device];
 }

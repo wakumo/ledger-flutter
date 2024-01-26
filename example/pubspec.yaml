@@ -19,13 +19,16 @@ dependencies:
 
   permission_handler: ^10.2.0
 
-  ledger_flutter: ^1.0.0
-    # path: ../
+  ledger_flutter:
+     path: ../
 
-  ledger_algorand: ^1.0.0-pre.1
-    # path: "../../ledger-algorand"
+  ledger_ethereum:
+     path: ../../ledger-ethereum
 
-  algorand_dart: ^2.0.0-dev.4
+  web3dart:
+    git:
+      url: https://github.com/ludowkm/web3dart.git
+      ref: 37b7793ecb53896699f1e43147459639ea54dffd
 
 dev_dependencies:
   flutter_test:

@@ -15,6 +15,11 @@ abstract class LedgerApp {
 
   Future<List<String>> getAccounts(LedgerDevice device);
 
+  Future<Uint8List> signPersonalMessage(
+    LedgerDevice device,
+    Uint8List message,
+  );
+
   Future<Uint8List> signTransaction(
     LedgerDevice device,
     Uint8List transaction,

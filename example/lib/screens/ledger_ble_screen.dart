@@ -44,7 +44,7 @@ class _LedgerBleViewState extends State<LedgerBleView> {
         BlocListener<LedgerBleBloc, LedgerBleState>(
           listener: (_, state) {
             if (state.status == LedgerBleStatus.failure) {
-              'Please open the Algorand App on your ledger device.'
+              'Please open the Ethereum App on your ledger device.'
                   .toast(context);
             }
           },
@@ -62,12 +62,12 @@ class _LedgerBleViewState extends State<LedgerBleView> {
                 },
                 child: const Text('Scan for Ledger devices'),
               ),
-              TextButton(
-                onPressed: () {
-                  context.read<LedgerBleBloc>().add(LedgerBleUsbStarted());
-                },
-                child: const Text('List USB devices'),
-              ),
+              // TextButton(
+              //   onPressed: () {
+              //     context.read<LedgerBleBloc>().add(LedgerBleUsbStarted());
+              //   },
+              //   child: const Text('List USB devices'),
+              // ),
               ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: state.devices.length,
@@ -103,16 +103,12 @@ class _LedgerBleViewState extends State<LedgerBleView> {
                         if (device == null || account == null) {
                           return;
                         }
-
                         context
                             .read<LedgerBleBloc>()
-                            .add(LedgerBleSignTransactionRequested(
-                              device,
-                              account,
-                            ));
+                            .add(LedgerBleSignPersonalMessageRequested(device));
                       }
                     : null,
-                child: const Text('Sign transaction'),
+                child: const Text('Sign personal message'),
               ),
               if (state.signature != null) ...[
                 Text(state.signature ?? ''),
@@ -124,7 +120,6 @@ class _LedgerBleViewState extends State<LedgerBleView> {
                         if (device == null) {
                           return;
                         }
-
                         context
                             .read<LedgerBleBloc>()
                             .add(LedgerBleDisconnectRequested(device));
