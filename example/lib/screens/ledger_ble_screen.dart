@@ -110,6 +110,21 @@ class _LedgerBleViewState extends State<LedgerBleView> {
                     : null,
                 child: const Text('Sign personal message'),
               ),
+              TextButton(
+                onPressed: state.status == LedgerBleStatus.connected
+                    ? () async {
+                        final device = state.device;
+                        final account = state.accounts.firstOrNull;
+                        if (device == null || account == null) {
+                          return;
+                        }
+                        context
+                            .read<LedgerBleBloc>()
+                            .add(LedgerBleSignTransactionRequested(device));
+                      }
+                    : null,
+                child: const Text('Sign transaction'),
+              ),
               if (state.signature != null) ...[
                 Text(state.signature ?? ''),
               ],

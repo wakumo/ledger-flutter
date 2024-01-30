@@ -27,6 +27,7 @@ class LedgerBleBloc extends Bloc<LedgerBleEvent, LedgerBleState> {
     on<LedgerBleUsbStarted>(_onUsbStarted);
     on<LedgerBleConnectRequested>(_onConnectStarted);
     on<LedgerBleSignPersonalMessageRequested>(_onSignPersonalMessageRequested);
+    on<LedgerBleSignTransactionRequested>(_onSignTransactionRequested);
     on<LedgerBleDisconnectRequested>(_onDisconnectStarted);
   }
 
@@ -109,6 +110,44 @@ class LedgerBleBloc extends Bloc<LedgerBleEvent, LedgerBleState> {
           device, Uint8List.fromList(utf8.encode(message)));
       final signatureInHex = bytesToHex(signature);
       print(signatureInHex);
+
+      emit(state.copyWith(
+        signature: () => signatureInHex,
+      ));
+    } catch (ex) {
+      if (kDebugMode) {
+        print(ex);
+      }
+    }
+  }
+
+  Future<void> _onSignTransactionRequested(
+    LedgerBleSignTransactionRequested event,
+    Emitter emit,
+  ) async {
+    final device = event.device;
+
+    try {
+      final ethereumApp = EthereumAppLedger(channel.ledger);
+
+      final tx = Transaction(
+          to: EthereumAddress.fromHex(
+              '0x0AE982e6C7e6e489C9b53e58eBEb2F7dF0615049'),
+          value: EtherAmount.fromUnitAndValue(EtherUnit.wei, '0x9184e72a000'),
+          maxGas: BigInt.parse('0x5208').toInt(),
+          maxFeePerGas:
+              EtherAmount.fromUnitAndValue(EtherUnit.wei, '0xe2300c4b8'),
+          maxPriorityFeePerGas:
+              EtherAmount.fromUnitAndValue(EtherUnit.wei, '0x826299e00'),
+          nonce: 0,
+          data: Uint8List.fromList(hexToBytes('0x')));
+
+      final txBytes = TransactionHandler.encodeTx(tx, BigInt.from(137));
+      print('tx in hex: ${bytesToHex(txBytes, include0x: true)}');
+
+      final signature = await ethereumApp.signTransaction(device, txBytes);
+      final signatureInHex = bytesToHex(signature);
+      print('tx signature in hex: $signatureInHex');
 
       emit(state.copyWith(
         signature: () => signatureInHex,
