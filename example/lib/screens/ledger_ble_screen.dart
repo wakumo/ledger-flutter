@@ -120,6 +120,21 @@ class _LedgerBleViewState extends State<LedgerBleView> {
                         }
                         context
                             .read<LedgerBleBloc>()
+                            .add(LedgerBleSignTypedDataRequested(device));
+                      }
+                    : null,
+                child: const Text('Sign EIP712 Hashed Message'),
+              ),
+              TextButton(
+                onPressed: state.status == LedgerBleStatus.connected
+                    ? () async {
+                        final device = state.device;
+                        final account = state.accounts.firstOrNull;
+                        if (device == null || account == null) {
+                          return;
+                        }
+                        context
+                            .read<LedgerBleBloc>()
                             .add(LedgerBleSignTransactionRequested(device));
                       }
                     : null,

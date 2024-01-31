@@ -11,8 +11,6 @@ abstract class LedgerApp {
 
   LedgerApp(this.ledger);
 
-  Future<dynamic> getVersion(LedgerDevice device);
-
   Future<List<String>> getAccounts(LedgerDevice device);
 
   Future<Uint8List> signPersonalMessage(
@@ -25,8 +23,10 @@ abstract class LedgerApp {
     Uint8List transaction,
   );
 
-  Future<List<Uint8List>> signTransactions(
-    LedgerDevice device,
-    List<Uint8List> transactions,
-  );
+  Future<Uint8List> signEIP712Message(LedgerDevice device, String jsonMessage);
+
+  Future<Uint8List> signEIP712HashedMessage(
+      {required LedgerDevice device,
+      required Uint8List domainSeparator,
+      required Uint8List hashStructMessage});
 }

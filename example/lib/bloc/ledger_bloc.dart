@@ -27,6 +27,7 @@ class LedgerBleBloc extends Bloc<LedgerBleEvent, LedgerBleState> {
     on<LedgerBleUsbStarted>(_onUsbStarted);
     on<LedgerBleConnectRequested>(_onConnectStarted);
     on<LedgerBleSignPersonalMessageRequested>(_onSignPersonalMessageRequested);
+    on<LedgerBleSignTypedDataRequested>(_onSignTypedDataRequested);
     on<LedgerBleSignTransactionRequested>(_onSignTransactionRequested);
     on<LedgerBleDisconnectRequested>(_onDisconnectStarted);
   }
@@ -70,12 +71,9 @@ class LedgerBleBloc extends Bloc<LedgerBleEvent, LedgerBleState> {
     try {
       final ethereumApp = EthereumAppLedger(channel.ledger);
 
-      final publicKeys = await ethereumApp.getAccounts(device);
-      final publicKey = publicKeys.firstOrNull;
-      if (publicKey != null) {
-        final address = EthereumAddress(publicKeyToAddress(
-                decompressPublicKey(hexToBytes(publicKey)).sublist(1)))
-            .hexEip55;
+      final addresses = await ethereumApp.getAccounts(device);
+      final address = addresses.firstOrNull;
+      if (address != null) {
         accounts.add(address);
       }
 
@@ -110,6 +108,34 @@ class LedgerBleBloc extends Bloc<LedgerBleEvent, LedgerBleState> {
           device, Uint8List.fromList(utf8.encode(message)));
       final signatureInHex = bytesToHex(signature);
       print(signatureInHex);
+
+      emit(state.copyWith(
+        signature: () => signatureInHex,
+      ));
+    } catch (ex) {
+      if (kDebugMode) {
+        print(ex);
+      }
+    }
+  }
+
+  Future<void> _onSignTypedDataRequested(
+    LedgerBleSignTypedDataRequested event,
+    Emitter emit,
+  ) async {
+    final device = event.device;
+
+    try {
+      final ethereumApp = EthereumAppLedger(channel.ledger);
+
+      const jsonMessage =
+          r'''{"types":{"EIP712Domain":[{"type":"string","name":"name"},{"type":"string","name":"version"},{"type":"uint256","name":"chainId"},{"type":"address","name":"verifyingContract"}],"Part":[{"name":"account","type":"address"},{"name":"value","type":"uint96"}],"Mint721":[{"name":"tokenId","type":"uint256"},{"name":"tokenURI","type":"string"},{"name":"creators","type":"Part[]"},{"name":"royalties","type":"Part[]"}]},"domain":{"name":"Mint721","version":"1","chainId":4,"verifyingContract":"0x2547760120aed692eb19d22a5d9ccfe0f7872fce"},"primaryType":"Mint721","message":{"@type":"ERC721","contract":"0x2547760120aed692eb19d22a5d9ccfe0f7872fce","tokenId":"1","uri":"ipfs://ipfs/hash","creators":[{"account":"0xc5eac3488524d577a1495492599e8013b1f91efa","value":10000}],"royalties":[],"tokenURI":"ipfs://ipfs/hash"}}''';
+
+      final signature =
+          await ethereumApp.signEIP712Message(device, jsonMessage);
+
+      final signatureInHex = bytesToHex(signature);
+      print('signature: $signatureInHex');
 
       emit(state.copyWith(
         signature: () => signatureInHex,
