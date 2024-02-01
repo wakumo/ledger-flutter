@@ -20,10 +20,14 @@ dependencies:
   permission_handler: ^10.2.0
 
   ledger_flutter:
-     path: ../
+    git:
+      url: https://github.com/wakumo/ledger-flutter.git
+      ref: a11d300ac75660677fd03e63b05096c1ac0f279e
 
   ledger_ethereum:
-     path: ../../ledger-ethereum
+    git:
+      url: https://github.com/wakumo/ledger-ethereum.git
+      ref: 7b92a3036ebd8aef26907b76526525381c2ea77c
 
   web3dart:
     git:

@@ -294,16 +294,20 @@ packages:
   ledger_ethereum:
     dependency: "direct main"
     description:
-      path: "../../ledger-ethereum"
-      relative: true
-    source: path
+      path: "."
+      ref: "7b92a3036ebd8aef26907b76526525381c2ea77c"
+      resolved-ref: "7b92a3036ebd8aef26907b76526525381c2ea77c"
+      url: "https://github.com/wakumo/ledger-ethereum.git"
+    source: git
     version: "0.0.1"
   ledger_flutter:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
+      path: "."
+      ref: a11d300ac75660677fd03e63b05096c1ac0f279e
+      resolved-ref: a11d300ac75660677fd03e63b05096c1ac0f279e
+      url: "https://github.com/wakumo/ledger-flutter.git"
+    source: git
     version: "1.0.1"
   ledger_usb:
     dependency: transitive
